@@ -1,5 +1,6 @@
 package com.joaovictornovais.pokedex.services.impl;
 
+import com.joaovictornovais.pokedex.exceptions.NoContentFoundException;
 import com.joaovictornovais.pokedex.repositories.PokemonRepository;
 import com.joaovictornovais.pokedex.services.PokemonService;
 import com.joaovictornovais.pokedex.services.dto.MinPokemonDTO;
@@ -61,7 +62,7 @@ public class PokemonServiceImpl implements PokemonService {
 
     public PokemonDTO findStrongestPokemon() {
         return this.findAllPokemon().stream()
-                .max(Comparator.comparingInt(PokemonDTO::level)).orElse(null);
+                .max(Comparator.comparingInt(PokemonDTO::level)).orElseThrow(NoContentFoundException::new);
     }
 
     public Map<String, Double> averageTypeLevel() {
