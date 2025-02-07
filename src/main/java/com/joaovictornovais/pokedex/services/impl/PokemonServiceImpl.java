@@ -70,6 +70,9 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     public PokemonPaginationDTO findAllAboveLevel(int minLevel, int page, int pokemonPerPage) {
+        if (minLevel < 1)
+            throw new InvalidArgumentException("'minLevel' must be equals or greater than 1.");
+
         List<PokemonDTO> filteredPokemon = this.findAllPokemonDTO().stream()
                 .filter(p -> p.level() >= minLevel).toList();
 

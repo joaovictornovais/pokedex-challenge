@@ -40,7 +40,7 @@ public class PokemonController {
 
     @GetMapping("/level-up")
     public ResponseEntity<PokemonPaginationDTO> findAllAboveLevel(
-            @RequestParam(value = "minLevel", required = true) int minLevel,
+            @RequestParam(value = "minLevel", defaultValue = "0") int minLevel,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "pokemonPerPage", defaultValue = "20") int pokemonPerPage) {
         return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.findAllAboveLevel(minLevel, page, pokemonPerPage));
@@ -48,7 +48,7 @@ public class PokemonController {
 
     @GetMapping("/group-by-type")
     public ResponseEntity<PokemonGroupedByTypePaginationDTO> groupPokemonByType(
-            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "pokemonPerPage", defaultValue = "20") int pokemonPerPage
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.groupPokemonByType(page, pokemonPerPage));
