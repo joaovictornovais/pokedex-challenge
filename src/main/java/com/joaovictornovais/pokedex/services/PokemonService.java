@@ -1,7 +1,8 @@
 package com.joaovictornovais.pokedex.services;
 
-import com.joaovictornovais.pokedex.services.dto.MinPokemonDTO;
 import com.joaovictornovais.pokedex.services.dto.PokemonDTO;
+import com.joaovictornovais.pokedex.services.dto.PokemonGroupedByTypePaginationDTO;
+import com.joaovictornovais.pokedex.services.dto.PokemonPaginationDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,15 +11,17 @@ import java.util.Map;
 @Service
 public interface PokemonService {
 
-    List<PokemonDTO> findAllPokemon();
+    List<PokemonDTO> findAllPokemonDTO();
 
-    List<PokemonDTO> findPokemonByType(String type);
+    PokemonPaginationDTO findAllPokemon(int page, int pokemonPerPage);
 
-    List<PokemonDTO> findAllAboveLevel(int minLevel);
+    PokemonPaginationDTO findPokemonByType(String type, int page, int pokemonPerPage);
 
-    Map<String, List<MinPokemonDTO>> groupPokemonsByType();
+    PokemonPaginationDTO findAllAboveLevel(int minLevel, int page, int pokemonPerPage);
 
-    List<PokemonDTO> sortPokemonsByLevel();
+    PokemonGroupedByTypePaginationDTO groupPokemonByType(int page, int pokemonPerPage);
+
+    PokemonPaginationDTO sortPokemonByLevel(String sort, int page, int pokemonPerPage);
 
     Map<String, Long> countByType();
 
@@ -26,6 +29,6 @@ public interface PokemonService {
 
     Map<String, Double> averageTypeLevel();
 
-    List<PokemonDTO> getTop3StrongestPokemons();
+    List<PokemonDTO> findTop3StrongestPokemon();
 
 }

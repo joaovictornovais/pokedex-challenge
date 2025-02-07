@@ -1,8 +1,9 @@
 package com.joaovictornovais.pokedex.controllers;
 
 import com.joaovictornovais.pokedex.services.PokemonService;
-import com.joaovictornovais.pokedex.services.dto.MinPokemonDTO;
 import com.joaovictornovais.pokedex.services.dto.PokemonDTO;
+import com.joaovictornovais.pokedex.services.dto.PokemonGroupedByTypePaginationDTO;
+import com.joaovictornovais.pokedex.services.dto.PokemonPaginationDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,23 +23,35 @@ public class PokemonController {
     private final PokemonService pokemonService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<PokemonDTO>> findAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.findAllPokemon());
+    public ResponseEntity<PokemonPaginationDTO> findAll(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pokemonPerPage", defaultValue = "20") int pokemonPerPage
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.findAllPokemon(page, pokemonPerPage));
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<PokemonDTO>> findPokemonByType(@RequestParam(value = "type", required = true) String type) {
-        return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.findPokemonByType(type));
+    public ResponseEntity<PokemonPaginationDTO> findPokemonByType(
+            @RequestParam(value = "type", required = true) String type,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pokemonPerPage", defaultValue = "20") int pokemonPerPage) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.findPokemonByType(type, page, pokemonPerPage));
     }
 
     @GetMapping("/level-up")
-    public ResponseEntity<List<PokemonDTO>> findAllAboveLevel(@RequestParam(value = "minLevel", required = true) Integer minLevel) {
-        return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.findAllAboveLevel(minLevel));
+    public ResponseEntity<PokemonPaginationDTO> findAllAboveLevel(
+            @RequestParam(value = "minLevel", required = true) int minLevel,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pokemonPerPage", defaultValue = "20") int pokemonPerPage) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.findAllAboveLevel(minLevel, page, pokemonPerPage));
     }
 
     @GetMapping("/group-by-type")
-    public ResponseEntity<Map<String, List<MinPokemonDTO>>> groupPokemonsByType() {
-        return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.groupPokemonsByType());
+    public ResponseEntity<PokemonGroupedByTypePaginationDTO> groupPokemonByType(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pokemonPerPage", defaultValue = "20") int pokemonPerPage
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.groupPokemonByType(page, pokemonPerPage));
     }
 
     @GetMapping("/count-by-type")
@@ -52,8 +65,12 @@ public class PokemonController {
     }
 
     @GetMapping("/sort-by-level")
-    public ResponseEntity<List<PokemonDTO>> sortPokemonsByLevel() {
-        return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.sortPokemonsByLevel());
+    public ResponseEntity<PokemonPaginationDTO> sortPokemonByLevel(
+            @RequestParam(name = "sort", defaultValue = "asc") String sortType,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "pokemonPerPage", defaultValue = "20") int pokemonPerPage
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.sortPokemonByLevel(sortType, page, pokemonPerPage));
     }
 
     @GetMapping("/strongest")
@@ -62,8 +79,8 @@ public class PokemonController {
     }
 
     @GetMapping("/top3")
-    public ResponseEntity<List<PokemonDTO>> getTop3StrongestPokemons() {
-        return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.getTop3StrongestPokemons());
+    public ResponseEntity<List<PokemonDTO>> findTop3StrongestPokemon() {
+        return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.findTop3StrongestPokemon());
     }
 
 
