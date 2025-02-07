@@ -186,6 +186,9 @@ public class PokemonServiceImpl implements PokemonService {
             throw new InvalidArgumentException("'Min Level' and 'Max Level' must be a Number");
         }
 
+        filters.remove("page");
+        filters.remove("pokemonPerPage");
+
         return pokemonList;
     }
 
