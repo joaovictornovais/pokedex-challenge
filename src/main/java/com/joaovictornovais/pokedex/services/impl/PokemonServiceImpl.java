@@ -121,7 +121,7 @@ public class PokemonServiceImpl implements PokemonService {
             allPokemon = allPokemon.stream()
                     .sorted(Comparator.comparingInt(PokemonDTO::level).reversed()).toList();
         } else {
-            throw new InvalidArgumentException("Invalid sort type. Accepted values are 'asc' or 'desc'.");
+            throw new InvalidArgumentException("Invalid 'sort' type. Accepted values are 'asc' or 'desc'.");
         }
 
         PaginatedResult<PokemonDTO> paginationResult = PaginationUtils.paginate(allPokemon, page, pokemonPerPage);
@@ -186,7 +186,7 @@ public class PokemonServiceImpl implements PokemonService {
                         .toList();
             }
         } catch (NumberFormatException e) {
-            throw new InvalidArgumentException("'Min Level' and 'Max Level' must be a Number");
+            throw new InvalidArgumentException("'minLevel' and 'maxLevel' must be a Number");
         }
 
         filters.remove("page");
