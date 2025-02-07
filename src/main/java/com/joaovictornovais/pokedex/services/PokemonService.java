@@ -15,7 +15,7 @@ public interface PokemonService {
 
     PokemonPaginationDTO findAllPokemon(int page, int pokemonPerPage);
 
-    PokemonPaginationDTO findPokemonByType(String type, int page, int pokemonPerPage);
+    PokemonPaginationDTO filterPokemon(Map<String, Object> filters, int page, int pokemonPerPage);
 
     PokemonPaginationDTO findAllAboveLevel(int minLevel, int page, int pokemonPerPage);
 

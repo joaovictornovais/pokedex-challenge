@@ -31,11 +31,11 @@ public class PokemonController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<PokemonPaginationDTO> findPokemonByType(
-            @RequestParam(value = "type", required = true) String type,
+    public ResponseEntity<PokemonPaginationDTO> filterPokemon(
+            @RequestParam Map<String, Object> filters,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "pokemonPerPage", defaultValue = "20") int pokemonPerPage) {
-        return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.findPokemonByType(type, page, pokemonPerPage));
+        return ResponseEntity.status(HttpStatus.OK).body(this.pokemonService.filterPokemon(filters, page, pokemonPerPage));
     }
 
     @GetMapping("/level-up")

@@ -52,18 +52,19 @@ public class PokemonServiceImpl implements PokemonService {
         );
     }
 
-    public PokemonPaginationDTO findPokemonByType(String type, int page, int pokemonPerPage) {
-        List<PokemonDTO> filteredPokemon = this.findAllPokemonDTO().stream()
-                .filter(p -> p.type().equals(type)).toList();
+    public PokemonPaginationDTO filterPokemon(Map<String, Object> filters, int page, int pokemonPerPage) {
+        List<PokemonDTO> allPokemon = this.findAllPokemonDTO();
 
-        PaginatedResult<PokemonDTO> paginationResult = PaginationUtils.paginate(filteredPokemon, page, pokemonPerPage);
+        List<PokemonDTO> verifiedFilters = verifyFilters(allPokemon, filters);
+
+        PaginatedResult<PokemonDTO> paginationResult = PaginationUtils.paginate(verifiedFilters, page, pokemonPerPage);
 
         return new PokemonPaginationDTO(
                 page,
                 paginationResult.totalPages(),
                 pokemonPerPage,
                 paginationResult.totalItems(),
-                Map.of("type", type),
+                filters,
                 paginationResult.content()
         );
     }
@@ -154,6 +155,38 @@ public class PokemonServiceImpl implements PokemonService {
         return this.findAllPokemonDTO().stream()
                 .sorted(Comparator.comparingInt(PokemonDTO::level).reversed())
                 .limit(3).toList();
+    }
+
+    private List<PokemonDTO> verifyFilters(List<PokemonDTO> pokemonList, Map<String, Object> filters) {
+        if (filters.containsKey("name")) {
+            pokemonList = pokemonList.stream()
+                    .filter(p -> p.name().toLowerCase().contains(filters.get("name").toString().toLowerCase()))
+                    .toList();
+        }
+
+        if (filters.containsKey("type")) {
+            pokemonList = pokemonList.stream()
+                    .filter(p -> p.type().equalsIgnoreCase(filters.get("type").toString()))
+                    .toList();
+        }
+
+        try {
+            if (filters.containsKey("minLevel")) {
+                pokemonList = pokemonList.stream()
+                        .filter(p -> p.level() >= Integer.parseInt(filters.get("minLevel").toString()))
+                        .toList();
+            }
+
+            if (filters.containsKey("maxLevel")) {
+                pokemonList = pokemonList.stream()
+                        .filter(p -> p.level() <= Integer.parseInt(filters.get("maxLevel").toString()))
+                        .toList();
+            }
+        } catch (NumberFormatException e) {
+            throw new InvalidArgumentException("'Min Level' and 'Max Level' must be a Number");
+        }
+
+        return pokemonList;
     }
 
 }
