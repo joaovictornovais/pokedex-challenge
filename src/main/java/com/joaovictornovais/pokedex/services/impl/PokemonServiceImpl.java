@@ -30,7 +30,7 @@ public class PokemonServiceImpl implements PokemonService {
                         p.getName(),
                         p.getType(),
                         p.getLevel()
-                )).toList();
+                )).collect(Collectors.toList());
     }
 
     public PokemonPaginationDTO findAllPokemon(int page, int pokemonPerPage) {
