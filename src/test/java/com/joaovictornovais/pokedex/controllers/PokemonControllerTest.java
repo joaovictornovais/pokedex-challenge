@@ -92,5 +92,27 @@ class PokemonControllerTest {
         verify(this.pokemonService, times(1)).filterPokemon(filters, page, pokemonPerPage);
     }
 
+    @Test
+    void itShouldFindAllPokemonByMinLevel() {
+        int minLevel = 12;
+        int page = 1;
+        int pokemonPerPage = 20;
+        List<PokemonDTO> pokemonList = List.of(
+                new PokemonDTO("Pikachu", "Electric", 16),
+                new PokemonDTO("Raichu", "Electric", 14)
+        );
+        PokemonPaginationDTO pokemonPaginationDTO = new PokemonPaginationDTO(
+                1, 1, 20, 1, Map.of(), pokemonList
+        );
 
+       when(this.pokemonService.findAllAboveLevel(minLevel, page, pokemonPerPage)).thenReturn(pokemonPaginationDTO);
+
+       ResponseEntity<PokemonPaginationDTO> response = this.pokemonController.findAllAboveLevel(minLevel, page, pokemonPerPage);
+       PokemonPaginationDTO body = response.getBody();
+
+       assertNotNull(body);
+       assertEquals(body.content(), pokemonList);
+
+       verify(this.pokemonService, times(1)).findAllAboveLevel(minLevel, page, pokemonPerPage);
+    }
 }

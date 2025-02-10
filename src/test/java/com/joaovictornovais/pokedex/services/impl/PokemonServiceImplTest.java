@@ -122,4 +122,44 @@ class PokemonServiceImplTest {
 
         assertEquals("'minLevel' and 'maxLevel' must be a Number", thrown.getMessage());
     }
+
+    @Test
+    void itShouldFindAllAboveMinLevel() {
+        List<Pokemon> allPokemon = List.of(
+                new Pokemon("Pikachu", "Electric", 10),
+                new Pokemon("Raichu", "Electric", 16),
+                new Pokemon("Charmander", "Fire", 13)
+        );
+        List<PokemonDTO> allPokemonDTO = List.of(
+                new PokemonDTO("Raichu", "Electric", 16),
+                new PokemonDTO("Charmander", "Fire", 13)
+        );
+        int minLevel = 12;
+        int page = 1;
+        int pokemonPerPage = 20;
+
+        when(this.pokemonRepository.findAll()).thenReturn(allPokemon);
+
+        PokemonPaginationDTO response = this.pokemonService.findAllAboveLevel(minLevel, page, pokemonPerPage);
+
+        assertNotNull(response);
+        assertEquals(response.content(), allPokemonDTO);
+
+        verify(this.pokemonRepository, times(1)).findAll();
+    }
+
+    @Test
+    void itShouldThrowExceptionIfMinLevelIsLessThanOne() {
+        int minLevel = -1;
+        int page = 1;
+        int pokemonPerPage = 20;
+
+        Exception thrown = assertThrows(InvalidArgumentException.class, () -> {
+            this.pokemonService.findAllAboveLevel(minLevel, page, pokemonPerPage);
+        });
+
+        assertEquals("'minLevel' must be equals or greater than 1.", thrown.getMessage());
+
+        verify(this.pokemonRepository, times(0)).findAll();
+    }
 }
