@@ -1,6 +1,7 @@
 package com.joaovictornovais.pokedex.services.impl;
 
 import com.joaovictornovais.pokedex.domain.pokemon.Pokemon;
+import com.joaovictornovais.pokedex.exceptions.InvalidArgumentException;
 import com.joaovictornovais.pokedex.repositories.PokemonRepository;
 import com.joaovictornovais.pokedex.services.dto.PokemonDTO;
 import com.joaovictornovais.pokedex.services.dto.PokemonPaginationDTO;
@@ -11,7 +12,9 @@ import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -71,4 +74,52 @@ class PokemonServiceImplTest {
 
     }
 
+    @Test
+    void itShouldFindAllFilteredPokemon() {
+        List<Pokemon> allPokemon = List.of(
+                new Pokemon("Pikachu", "Electric", 12),
+                new Pokemon("Raichu", "Electric", 16),
+                new Pokemon("Charmander", "Fire", 10)
+        );
+        List<PokemonDTO> allFilteredPokemon = List.of(
+                new PokemonDTO("Raichu", "Electric", 16)
+        );
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("name", "chu");
+        filters.put("type", "Electric");
+        filters.put("minLevel", 15);
+        filters.put("maxLevel", 20);
+
+        when(this.pokemonRepository.findAll()).thenReturn(allPokemon);
+
+        PokemonPaginationDTO response = this.pokemonService.filterPokemon(filters, 1, 20);
+
+        assertNotNull(response);
+        assertEquals(response.content(), allFilteredPokemon);
+        assertEquals(1, response.content().size());
+
+        verify(this.pokemonRepository, times(1)).findAll();
+    }
+
+    @Test
+    void itShouldThrowExceptionWhenMinLevelOrMaxLeverFilterAreNotNumbers() {
+        List<Pokemon> allPokemon = List.of(
+                new Pokemon("Pikachu", "Electric", 12),
+                new Pokemon("Raichu", "Electric", 16),
+                new Pokemon("Charmander", "Fire", 10)
+        );
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("name", "chu");
+        filters.put("type", "Electric");
+        filters.put("minLevel", "aksdoaskodkadkpowkpod");
+        filters.put("maxLevel", "as,dopakspodaksopd");
+
+        when(this.pokemonRepository.findAll()).thenReturn(allPokemon);
+
+        Exception thrown = assertThrows(InvalidArgumentException.class, () -> {
+            this.pokemonService.filterPokemon(filters, 1, 20);
+        });
+
+        assertEquals("'minLevel' and 'maxLevel' must be a Number", thrown.getMessage());
+    }
 }

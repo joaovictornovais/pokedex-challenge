@@ -160,7 +160,7 @@ public class PokemonServiceImpl implements PokemonService {
                 .limit(3).toList();
     }
 
-    private List<PokemonDTO> verifyFilters(List<PokemonDTO> pokemonList, Map<String, Object> filters) {
+    public List<PokemonDTO> verifyFilters(List<PokemonDTO> pokemonList, Map<String, Object> filters) {
         if (filters.containsKey("name")) {
             pokemonList = pokemonList.stream()
                     .filter(p -> p.name().toLowerCase().contains(filters.get("name").toString().toLowerCase()))

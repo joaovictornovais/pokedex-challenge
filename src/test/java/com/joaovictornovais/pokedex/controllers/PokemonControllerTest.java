@@ -62,4 +62,35 @@ class PokemonControllerTest {
         verify(this.pokemonService, times(1)).findAllPokemon(1, 20);
     }
 
+    @Test
+    void itShouldFindAllFilteredPokemon() {
+        Map<String, Object> filters = Map.of("name", "saur", "minLevel", 16);
+        List<PokemonDTO> filteredPokemon = List.of(
+                new PokemonDTO("Ivysaur", "Grass", 16),
+                new PokemonDTO("Venusaur", "Grass", 32)
+        );
+        int page = 1;
+        int pokemonPerPage = 20;
+        PokemonPaginationDTO paginationDTO = new PokemonPaginationDTO(
+                1,
+                1,
+                20,
+                20,
+                filters,
+                filteredPokemon
+        );
+        when(this.pokemonService.filterPokemon(filters, page, pokemonPerPage)).thenReturn(paginationDTO);
+
+        ResponseEntity<PokemonPaginationDTO> response = this.pokemonController.filterPokemon(filters, page, pokemonPerPage);
+        PokemonPaginationDTO body = response.getBody();
+
+        assertNotNull(body);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, body.content().size());
+        assertEquals(body.content(), filteredPokemon);
+
+        verify(this.pokemonService, times(1)).filterPokemon(filters, page, pokemonPerPage);
+    }
+
+
 }
