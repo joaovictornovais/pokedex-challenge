@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class PokemonRepository {
@@ -15,8 +16,20 @@ public class PokemonRepository {
         return list;
     }
 
+    public Optional<Pokemon> findByName(String name) {
+        return this.list.stream()
+                .filter(p -> p.getName().equalsIgnoreCase(name))
+                .findFirst();
+    }
+
     public void addAll(List<Pokemon> toAdd) {
-        list.addAll(toAdd);
+        for (Pokemon pokemon : toAdd) {
+            if (findByName(pokemon.getName()).isEmpty()) {
+                this.list.add(pokemon);
+            } else {
+                System.out.println(pokemon.getName() + " is already registered");
+            }
+        }
     }
 
 }
